@@ -40,6 +40,8 @@ switch (commandInput) {
     break;
 }
 
+//userChoice(commandInput,commandQuery);
+
 function spotifyThisSong() {
   console.log("\nLook for: " + commandQuery);
 
@@ -51,12 +53,14 @@ function spotifyThisSong() {
     .search({ type: 'track', query: commandQuery }) //limit: 1. can use index 0 for items to retreieve the first song in the items array in the response
     .then(function (response) {
       //console.log(response);
+      
       console.log("Artist: " + response.tracks.items[0].album.artists[0].name + "\nName of Song: " + response.tracks.items[0].name + "\nA preview link: " + response.tracks.items[0].external_urls.spotify + "\nAlbum : " + response.tracks.items[0].album.name);
 
     })
     .catch(function (err) {
       console.log(err);
     });
+    //doWhatItSays()
 };
 
 // Then run a request with axios to the OMDB API with the movie specified
@@ -78,4 +82,39 @@ function movieThis() {
 
     }
   );
+}
+
+function doWhatItSays(){
+  fs.readFile("random.txt", "utf8", function(error, data) {
+
+    // If the code experiences any errors it will log the error to the console.
+    if (error) {
+      return console.log(error);
+    }
+  
+    // We will then print the contents of data
+    //console.log(data);
+  
+    // Then split it by commas (to make it more readable)
+    var dataArr = data.split(",");
+    //console.log(dataArr);
+    
+    // We will then re-display the content as an array for later use.
+    //console.log(dataArr);
+    commandInput = dataArr[0];
+    commandQuery = dataArr[1];
+
+    // If the user wants to add a song then use spotify response [test song: spotify-this-song,"I Want it That Way]
+    spotify
+    .search({ type: 'track', query: commandQuery }) //limit: 1. can use index 0 for items to retreieve the first song in the items array in the response
+    .then(function (response) {
+      
+      console.log("Artist: " + response.tracks.items[0].album.artists[0].name + "\nName of Song: " + response.tracks.items[0].name + "\nA preview link: " + response.tracks.items[0].external_urls.spotify + "\nAlbum : " + response.tracks.items[0].album.name);
+
+    })
+    .catch(function (err) {
+      console.log(err);
+    });
+     
+  }); 
 }
