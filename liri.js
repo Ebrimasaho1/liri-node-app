@@ -10,76 +10,72 @@ var moment = require("moment");
 
 // // Grab the movieName which will always be the third node argument.
 var Spotify = require('node-spotify-api');
- 
+
 var spotify = new Spotify(keys.spotify);
 
-console.log(spotify);
-
-// var omdb = new omdb(keys.omdb);
-//     return console.log('Error occurred: ' + err);
-//   }
- 
-
+//console.log(spotify);
 
 var commandInput = process.argv[2];
 var commandQuery = process.argv.slice(3).join(" ");
 
-console.log(commandInput);
-console.log(commandQuery);
 // console.log(commandInput);
+// console.log(commandQuery);
+
 
 switch (commandInput) {
   case "concert-this":
     concertThis()
     break;
-  
-  case "sportify-this-song":
-    sportifyThisSong();
+
+  case "spotify-this-song":
+    spotifyThisSong();
     break;
-  
+
   case "movie-this":
     movieThis();
     break;
-  
+
   case "do-what-it-says":
     doWhatItSays(commandQuery);
     break;
+}
+
+function spotifyThisSong() {
+  console.log("\nLook for: " + commandQuery);
+
+  if (!commandQuery) {
+    commandQuery = "The Sign Ace of Base"
   }
 
-function sportifyThisSong(){
-   
-  spotify.search({ type: 'track', query: 'All the Small Things' }, function(err, data) {
-    if (err) {
-      return console.log('Error occurred: ' + err);
-    }
-   
-  console.log(data); 
+  spotify
+    .search({ type: 'track', query: commandQuery }) //limit: 1. can use index 0 for items to retreieve the first song in the items array in the response
+    .then(function (response) {
+      //console.log(response);
+      console.log("Artist: " + response.tracks.items[0].album.artists[0].name + "\nName of Song: " + response.tracks.items[0].name + "\nA preview link: " + response.tracks.items[0].external_urls.spotify + "\nAlbum : " + response.tracks.items[0].album.name);
 
-  var spotifyArr = data.tracks.items;
-    for(i=1; i<spotifyArr.length-1; i++){
-      console.log(data.tracks);
-      
-    }
-  });
-}
+    })
+    .catch(function (err) {
+      console.log(err);
+    });
+};
+
 // Then run a request with axios to the OMDB API with the movie specified
-
-function movieThis(){
-
-  if (!commandQuery){
+function movieThis() {
+  console.log("\nLook for: " + commandQuery);
+  if (!commandQuery) {
     commandQuery = "Mr. Nobody."
   }
-var queryUrl = "http://www.omdbapi.com/?t=" + commandQuery + "&y=&plot=short&tomatoes=true&apikey=b95c5631"; //&y=&plot=short&apikey=b95c5631
+  var queryUrl = "http://www.omdbapi.com/?t=" + commandQuery + "&y=&plot=short&tomatoes=true&apikey=b95c5631"; //&y=&plot=short&apikey=b95c5631
 
-// This line is just to help us debug against the actual URL.
-console.log(queryUrl);
+  // This line is just to help us debug against the actual URL.
+  //console.log(queryUrl);
 
-axios.get(queryUrl).then(
-  function(response) {
-    console.log(response);
-    
-    console.log("Name: " + response.data.Title + "\nReleased Year: " + response.data.Released + "\nRating: " + response.data.Rated + "\nIMDB Rating: " + response.data.imdbRating + "\nRotten Tomatoes Rating: " + response.data.tomatoReviews + "\nCountry of Production: " + response.data.Country + "\nLanguage: " + response.data.Language + "\nPlot: " + response.data.Plot + "\nActors: " + response.data.Actors);
-    
-  }
-);
+  axios.get(queryUrl).then(
+    function (response) {
+      //console.log(response);
+
+      console.log("Name: " + response.data.Title + "\nReleased Year: " + response.data.Released + "\nRating: " + response.data.Rated + "\nIMDB Rating: " + response.data.imdbRating + "\nRotten Tomatoes Rating: " + response.data.tomatoReviews + "\nCountry of Production: " + response.data.Country + "\nLanguage: " + response.data.Language + "\nPlot: " + response.data.Plot + "\nActors: " + response.data.Actors);
+
+    }
+  );
 }
