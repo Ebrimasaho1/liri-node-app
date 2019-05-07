@@ -119,8 +119,10 @@ function doWhatItSays() {
     //console.log(dataArr);
     commandInput = dataArr[0];
     commandQuery = dataArr[1];
-
+    console.log(commandInput);
+    
     // If the user wants to add a song then use spotify response [test song: spotify-this-song,"I Want it That Way
+    if (commandInput === "spotify-this-song"){
     spotify
       .search({ type: 'track', query: commandQuery }) //limit: 1. can use index 0 for items to retreieve the first song in the items array in the response
       .then(function (response) {
@@ -131,6 +133,41 @@ function doWhatItSays() {
       .catch(function (err) {
         console.log(err);
       });
+    }
 
+    else if(commandInput === "movie-this") {
+
+      var queryUrl = "http://www.omdbapi.com/?t=" + commandQuery + "&y=&plot=short&tomatoes=true&apikey=b95c5631"; //&y=&plot=short&apikey=b95c5631
+
+      // This line is just to help us debug against the actual URL.
+      //console.log(queryUrl);
+    
+      axios.get(queryUrl).then(
+        function (response) {
+          //console.log(response);
+    
+          console.log("Name: " + response.data.Title + "\nReleased Year: " + response.data.Released + "\nRating: " + response.data.Rated + "\nIMDB Rating: " + response.data.imdbRating + "\nRotten Tomatoes Rating: " + response.data.tomatoReviews + "\nCountry of Production: " + response.data.Country + "\nLanguage: " + response.data.Language + "\nPlot: " + response.data.Plot + "\nActors: " + response.data.Actors);
+    
+        }
+      );
+      }
+
+      else if (commandInput==="concert-this") {
+      var queryUrl = "https://rest.bandsintown.com/artists/" + commandQuery + "/events?app_id=codingbootcamp"
+        console.log(commandQuery);
+        
+  axios.get(queryUrl).then(
+    function (response) {
+      // console.log(response);
+
+      var concertDate = moment(response.data[0].venue.datetime).format("MM/DD/YYYY");
+      // console.log(concertDate);
+
+      console.log("Name of Venue: " + response.data[0].venue.name + "\nRegion: " + response.data[0].venue.city + "," + response.data[0].venue.region + "\nDate: " + concertDate);
+
+
+    }
+  );
+  }
   });
 }
